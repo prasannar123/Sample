@@ -36,9 +36,13 @@ def run(playwright: Playwright) -> None:
     context = browser.new_context()
     page = context.new_page()
     # Set the viewport size
-    #page.set_viewport_size({"width": 1820, "height": 1080})
+    page.set_viewport_size({"width": 1080, "height": 1380})
 
     page.goto("https://www.usvisascheduling.com/en-US/")
+    #page.fill("#signInName", "SHIRAJ FATWANI")
+    #page.fill("#password", "Fatwani@1983")
+    page.fill("#signInName", "Vivekr_1980")
+    page.fill("#password", "Vivek@1980")
 
     try:
         page.click("#continue_application", timeout=120000)  # Increase timeout to 60 seconds (60000 milliseconds)
@@ -57,12 +61,14 @@ def run(playwright: Playwright) -> None:
     print(choices)
     page.wait_for_selector("#gm_select", timeout=120000)
     while True:
-        time.sleep(1)
+        #time.sleep(1)
         try:
             for each_item in choices[1:]:
                 print(each_item)
                 if each_item in list_of_options:
                     if not exit_flag:
+                        page.click("#post_select")
+                        page.wait_for_selector("#post_select", timeout=120000)
                         page.select_option("#post_select", '')
                         if exit_flag:
                             print("Selected slot.........")
@@ -87,11 +93,10 @@ def run(playwright: Playwright) -> None:
                             if not datepicker:
                                 print("Timeout waiting for datepicker")
                                 continue
-                            datepicker.dblclick()
-                            #datepicker.click()
 
-                            if datepicker!=None:
-                             for each in range(selected_month + 1):
+                            datepicker.click()
+
+                            for each in range(selected_month + 1):
                                 if page.query_selector_all("td[class*='greenday']"):
                                     list_of_greendays = page.query_selector_all("td[class*='greenday']")
                                     print("number of green day available:", len(list_of_greendays))
@@ -105,9 +110,6 @@ def run(playwright: Playwright) -> None:
                                             print(green_date)
                                             green_date.click()
                                             #time.sleep(10)
-
-
-
                                             page.wait_for_selector('.col-sm-6 label input', timeout=10000)
                                             list_of_availablity_slots = page.query_selector_all('.col-sm-6 label input')
 
@@ -156,6 +158,18 @@ def run(playwright: Playwright) -> None:
                                                     datepicker.click()
                                 else:
                                     try:
+                                        """
+                                        import pdb;pdb.set_trace()
+                                        # Click the datepicker to open the calendar
+                                        page.click('.form-control.hasDatepicker')
+
+                                        # Wait for the datepicker calendar to appear
+                                        page.wait_for_selector('.ui-datepicker-calendar',timeout=12000)
+
+                                        # Find and click the next button if needed
+                                        page.click('.ui-datepicker-next')
+                                        page.wait_for_selector('.ui-datepicker-calendar',timeout=1000)
+                                        """
                                         page.wait_for_selector(".ui-icon.ui-icon-circle-triangle-e", timeout=120000)
                                         page.click(".ui-icon.ui-icon-circle-triangle-e")
                                     except Exception as e:
